@@ -1,0 +1,59 @@
+---
+- name: Create ArgoCD namespace
+  kubernetes.core.k8s:
+    api_version: v1
+    kind: Namespace
+    name: argocd
+    state: present
+
+- name: Download ArgoCD manifest
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+    dest: /tmp/argocd-install.yaml
+
+- name: Apply ArgoCD manifest
+  ansible.builtin.command:
+    cmd: kubectl apply -n argocd -f /tmp/argocd-install.yaml
+  register: kubectl_result
+  changed_when: "'created' in kubectl_result.stderr or 'configured' in kubectl_result.stderr"
+
+- name: Create LoadBalancer service for ArgoCD
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: argocd-server-lb
+        namespace: argocd
+      spec:
+        type: LoadBalancer
+        ports:
+        - port: 443
+          targetPort: 8080
+        selector:
+          app.kubernetes.io/name: argocd-server
+
+- name: Wait for LoadBalancer IP
+  kubernetes.core.k8s:
+    api_version: v1
+    kind: Service
+    name: argocd-server-lb
+    namespace: argocd
+  register: lb_service
+  until: lb_service.result.status.loadBalancer.ingress is defined
+  retries: 30
+  delay: 10
+
+- name: Get ArgoCD admin password
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Secret
+    name: argocd-initial-admin-secret
+    namespace: argocd
+  register: argocd_secret
+
+- name: Display ArgoCD access information
+  debug:
+    msg: 
+      - "ArgoCD is accessible at https://{{ lb_service.result.status.loadBalancer.ingress[0].ip }}"
+      - "ArgoCD admin password: {{ argocd_secret.resources[0].data.password | b64decode }}"

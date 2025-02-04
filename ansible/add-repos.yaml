@@ -1,0 +1,6 @@
+---
+- name: Adding Repo's for Linux OS's
+  hosts: linux
+  become: yes
+  roles:
+    - add-repos

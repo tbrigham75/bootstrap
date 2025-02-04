@@ -1,0 +1,31 @@
+---
+- name: Setting up home var
+  set_fact:
+    home_dir: "{{ lookup('env', 'HOME') }}"
+
+- name: Install multiple packages for all distros of linux
+  package:
+    name:
+      - vim
+      - net-tools
+      - whois
+      #- nfs-common #Only for debian based on RHEL based its nfs-utils so have to do the 2 extra installs below
+    state: latest
+    update_cache: true
+
+- name: Install nfs-utils for RHEL based systems
+  yum:
+    name:
+      - nfs-utils
+    state: latest
+    update_cache: true
+  when: ansible_distribution in ['AlmaLinux', 'CentOS', 'RedHat', 'Rocky']
+
+- name: Install nfs-common for Debian based systems
+  apt:
+    pkg:
+      - nfs-common
+    state: latest
+    update_cache: true
+    autoremove: yes
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'

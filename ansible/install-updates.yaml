@@ -1,0 +1,7 @@
+---
+- name: Running updates for OS's
+  hosts: linux
+  become: yes
+  roles:
+    - install-updates
+ 

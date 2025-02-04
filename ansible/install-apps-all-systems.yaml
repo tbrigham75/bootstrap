@@ -1,0 +1,7 @@
+---
+- name: Installing apps on all linux systems
+  hosts: linux
+  become: yes
+  roles:
+    - add-repos
+    - install-apps-all-systems

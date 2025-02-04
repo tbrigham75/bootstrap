@@ -1,0 +1,12 @@
+---
+# NOTE:  On all the nodes in the cluster - You must have nfs-common for debian based or on RHEL based its nfs-utils (add-repo does this)
+# Wrote this after watching this:  https://www.virtualizationhowto.com/2023/11/nfs-subdir-external-provisioner-connect-your-nas-with-kubernetes/
+
+- name: Deploy NFS Subdirectory External Provisioner
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  #become: yes
+  roles:
+    - add-repos
+    - deploy-nfs-provisioner

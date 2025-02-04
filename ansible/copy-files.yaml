@@ -1,0 +1,6 @@
+---
+- name: Copying Files to linux systems
+  hosts: linux
+  #become: yes
+  roles:
+    - copy-files

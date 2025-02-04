@@ -1,0 +1,39 @@
+---
+- name: Setting up infrastructure
+  hosts: linux
+  become: yes
+  roles:
+    - add-repos
+    - copy-files
+    - install-apps-all-systems
+    - install-updates
+
+- name: Install Ansible collections
+  hosts: localhost
+  connection: local
+  roles:
+    - install-ansible-collections
+
+# - name: Installing FreeIPA
+#   hosts: ipaserver
+#   become: yes
+#   roles:
+#     - install-requirements-freeipa
+#     - freeipa.ansible_freeipa.ipaserver
+    
+# - name: Install FreeIPA Client
+#   hosts: ipaclients
+#   gather_facts: yes
+#   become: true
+#   roles:
+#     - freeipa.ansible_freeipa.ipaclient
+#     - install-freeipa-client
+
+- name: Deploying ArgoCD and deploying NFS provisioner
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  #become: yes
+  roles:
+    - deploy-nfs-provisioner
+    - deploy-argocd
