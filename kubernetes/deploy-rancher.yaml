@@ -1,35 +1,3 @@
-# ---
-# apiVersion: argoproj.io/v1alpha1
-# kind: Application
-# metadata:
-#   name: rancher
-#   namespace: argocd
-# spec:
-#   project: default
-#   source:
-#     repoURL: 'https://releases.rancher.com/server-charts/stable'
-#     targetRevision: 2.10.2
-#     chart: rancher
-#     helm:
-#       values: |
-#         hostname: rancher.home.org
-#         replicas: 3
-#         bootstrapPassword: password
-#         ingress:
-#           tls:
-#             source: letsEncrypt
-#         letsEncrypt:
-#           email: tbrigham@hotmail.com
-#   destination:
-#     server: 'https://kubernetes.default.svc'
-#     namespace: cattle-system
-#   syncPolicy:
-#     automated:
-#       prune: true
-#       selfHeal: true
-#     syncOptions:
-#       - CreateNamespace=true
----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -40,19 +8,15 @@ spec:
   source:
     chart: rancher
     repoURL: https://releases.rancher.com/server-charts/latest
-    targetRevision: 2.10.2
+    targetRevision: 2.10.2  # Update this to the latest stable version
     helm:
       values: |
         hostname: rancher.home.org
-        replicas: 3
         ingress:
-          tls:
-            source: letsEncrypt
-        letsEncrypt:
-          email: tbrigham@hotmail.com
-        service:
-          type: LoadBalancer
-          loadBalancerIP: 192.168.2.230  # Replace with your desired external IP
+          enabled: false  # Disable default ingress, we'll use Traefik
+        tls: external
+        privateCA: false  # Set to true if using a private CA
+        bootstrapPassword: "passwordhere"  # Change this to a secure password
   destination:
     server: https://kubernetes.default.svc
     namespace: cattle-system
@@ -62,3 +26,35 @@ spec:
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: rancher-cert
+  namespace: cattle-system
+spec:
+  secretName: rancher-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+  - rancher.home.org
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: rancher-route
+  namespace: cattle-system
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`rancher.home.org`)
+    kind: Rule
+    services:
+    - name: rancher
+      port: 80
+  tls:
+    secretName: rancher-tls
