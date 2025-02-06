@@ -5,7 +5,7 @@
 - name: Deploy NFS Subdirectory External Provisioner
   hosts: localhost
   connection: local
-  gather_facts: false
+  gather_facts: true
   #become: yes
   roles:
     - add-repos
