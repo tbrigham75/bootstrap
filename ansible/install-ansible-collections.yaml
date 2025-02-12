@@ -1,0 +1,7 @@
+- name: Install Ansible Collections Locally
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  #become: yes
+  roles:
+    - install-ansible-collections
