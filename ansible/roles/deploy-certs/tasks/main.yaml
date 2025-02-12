@@ -1,36 +1,34 @@
 ---
+- name: Create a directory for CA certificates
+  file:
+    path: /etc/kubernetes/pki/ca
+    state: directory
+
 - name: Copying MITRE_BA_NPE_CA-3.crt
   copy:
     src: "MITRE_BA_NPE_CA-3.crt"
-    dest: "/etc/certificates/trust/"
+    dest: "/etc/kubernetes/pki/ca/"
     mode: '0644'
 
 - name: Copying MITRE_BA_ROOT.crt
   copy:  
     src: "MITRE_BA_ROOT.crt"
-    dest: "/etc/certificates/trust/"
+    dest: "/etc/kubernetes/pki/ca/"
     mode: '0644'
 
 - name: Copying ZScaler_Root.crt
   copy:  
     src: "ZScaler_Root.crt"
-    dest: "/etc/certificates/trust/"
+    dest: "/etc/kubernetes/pki/ca/"
     mode: '0644'
 
-- name: Update K3S Trust Store MITRE_BA_NPE_CA-3.crt
-  k3sadm:
-    cmd: "add-trust"
-    cert_file: "MITRE_BA_NPE_CA-3.crt"
-    ca_cert: true
+- name: Copy CA certificates to worker nodes
+  copy:
+    src: /etc/kubernetes/pki/ca/*.crt
+    dest: /etc/ssl/certs/ca.crt
+    mode: 0644
 
-- name: Update K3S Trust Store MITRE_BA_ROOT.crt
-  k3sadm:
-    cmd: "add-trust"
-    cert_file: "MITRE_BA_ROOT.crt"
-    ca_cert: true
-
-- name: Update K3S Trust Store ZScaler_Root.crt
-  k3sadm:
-    cmd: "add-trust"
-    cert_file: "ZScaler_Root.crt"
-    ca_cert: true
+- name: Restart kubelet service
+  service:
+    name: kubelet
+    state: restarted
