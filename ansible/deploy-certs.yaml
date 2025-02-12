@@ -1,0 +1,7 @@
+---
+- name: Deploying Company CA Certs for K3s
+  hosts: k3s
+  gather_facts: false
+  become: yes
+  roles:
+    - deploy-certs
