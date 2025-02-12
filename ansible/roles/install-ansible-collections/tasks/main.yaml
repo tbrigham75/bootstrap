@@ -4,3 +4,7 @@
     cmd: ansible-galaxy collection install -r "{{ role_path }}/files/install-freeipa-requirements.yaml"
   register: install_result
   changed_when: "'Installing' in install_result.stdout"
+
+- collection_name:
+  module_name: k3sadm
+  version: '1.0'
