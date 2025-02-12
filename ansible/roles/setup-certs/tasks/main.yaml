@@ -1,0 +1,36 @@
+---
+- name: Copying MITRE_BA_NPE_CA-3.crt
+  copy:
+    src: "MITRE_BA_NPE_CA-3.crt"
+    dest: "/etc/certificates/trust/"
+    mode: '0644'
+
+- name: Copying MITRE_BA_ROOT.crt
+  copy:  
+    src: "MITRE_BA_ROOT.crt"
+    dest: "/etc/certificates/trust/"
+    mode: '0644'
+
+- name: Copying ZScaler_Root.crt
+  copy:  
+    src: "ZScaler_Root.crt"
+    dest: "/etc/certificates/trust/"
+    mode: '0644'
+
+- name: Update K3S Trust Store MITRE_BA_NPE_CA-3.crt
+  k3sadm:
+    cmd: "add-trust"
+    cert_file: "MITRE_BA_NPE_CA-3.crt"
+    ca_cert: true
+
+- name: Update K3S Trust Store MITRE_BA_ROOT.crt
+  k3sadm:
+    cmd: "add-trust"
+    cert_file: "MITRE_BA_ROOT.crt"
+    ca_cert: true
+
+- name: Update K3S Trust Store ZScaler_Root.crt
+  k3sadm:
+    cmd: "add-trust"
+    cert_file: "ZScaler_Root.crt"
+    ca_cert: true
