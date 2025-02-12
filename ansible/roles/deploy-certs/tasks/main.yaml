@@ -7,19 +7,19 @@
 - name: Copying MITRE_BA_NPE_CA-3.crt
   copy:
     src: "MITRE_BA_NPE_CA-3.crt"
-    dest: "/etc/kubernetes/pki/ca/"
+    dest: "/etc/kubernetes/pki/ca/MITRE_BA_NPE_CA-3.crt"
     mode: '0644'
 
 - name: Copying MITRE_BA_ROOT.crt
   copy:  
     src: "MITRE_BA_ROOT.crt"
-    dest: "/etc/kubernetes/pki/ca/"
+    dest: "/etc/kubernetes/pki/ca/MITRE_BA_ROOT.crt"
     mode: '0644'
 
 - name: Copying ZScaler_Root.crt
   copy:  
     src: "ZScaler_Root.crt"
-    dest: "/etc/kubernetes/pki/ca/"
+    dest: "/etc/kubernetes/pki/ca/ZScaler_Root.crt"
     mode: '0644'
 
 - name: Copy CA certificates to worker nodes
