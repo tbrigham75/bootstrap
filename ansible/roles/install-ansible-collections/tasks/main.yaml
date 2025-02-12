@@ -5,8 +5,8 @@
   register: install_result
   changed_when: "'Installing' in install_result.stdout"
 
-- name: Install k3sadm collection version '1.0'
+- name: Install k3sadm collection
   ansible.builtin.command:
-    cmd: ansible-galaxy collection install --collection=k3sadm --version=1.0
+    cmd: ansible-galaxy collection install --collection=k3sadm
   register: install_result
   changed_when: "'Installing' in install_result.stdout"
