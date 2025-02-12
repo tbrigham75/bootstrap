@@ -5,10 +5,6 @@
   register: install_result
   changed_when: "'Installing' in install_result.stdout"
 
-# Variables
-vars:
-  k3sadm_version: "1.2.0"
-
 - name: Install k3sadm collection
   ansible.galaxy.collection:
     name: k3sadm
