@@ -1,7 +1,7 @@
 ---
 - name: Create a directory for CA certificates
   file:
-    path: /etc/kubernetes/pki/ca
+    path: /etc/kubernetes/pki/ca/
     state: directory
 
 - name: Copying MITRE_BA_NPE_CA-3.crt
