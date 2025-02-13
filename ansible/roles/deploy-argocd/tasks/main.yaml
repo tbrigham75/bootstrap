@@ -27,7 +27,7 @@
     kind: Namespace
     name: argocd
     state: present
-    kubeconfig: "{{ home_dir }}/.kube/config"
+    kubeconfig: "{{ home_dir }}"/.kube/config
 
 - name: Create ArgoCD namespace
   kubernetes.core.k8s:
