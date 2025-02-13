@@ -20,12 +20,22 @@
     msg: "Kubernetes Python library is now installed and importable."
   when: import_check.rc == 0
 
+- name: Create namespace
+  set_fact:
+    home_dir: "{{ lookup('env', 'HOME') }}"
+  kubernetes.core.k8s:
+    kind: Namespace
+    name: argocd
+    state: present
+    kubeconfig: {{ home_dir }}/.kube/config
+
 - name: Create ArgoCD namespace
   kubernetes.core.k8s:
     api_version: v1
     kind: Namespace
     name: argocd
     state: present
+    kubeconfig: /path/to/your/kubeconfig
 
 - name: Download ArgoCD manifest
   ansible.builtin.get_url:
