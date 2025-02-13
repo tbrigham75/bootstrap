@@ -1,4 +1,25 @@
 ---
+- name: Install pip if not present
+  ansible.builtin.package:
+    name: python3-pip
+    state: present
+
+- name: Install kubernetes Python package
+  ansible.builtin.pip:
+    name: kubernetes
+    state: present
+
+- name: Verify kubernetes package installation
+  ansible.builtin.command: python3 -c "import kubernetes"
+  register: import_check
+  changed_when: false
+  ignore_errors: true
+
+- name: Display result
+  ansible.builtin.debug:
+    msg: "Kubernetes Python library is now installed and importable."
+  when: import_check.rc == 0
+
 - name: Create ArgoCD namespace
   kubernetes.core.k8s:
     api_version: v1
