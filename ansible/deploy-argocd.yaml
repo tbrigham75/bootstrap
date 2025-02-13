@@ -2,8 +2,7 @@
 - name: Deploy ArgoCD and create LoadBalancer
   hosts: localhost
   connection: local
-  gather_facts: false
-  #become: yes
+  gather_facts: true
+  become: yes
   roles:
-    - add-repos
     - deploy-argocd
